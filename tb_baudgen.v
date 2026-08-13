@@ -19,7 +19,7 @@ module tb_baudgen;
     initial begin
         clk = 0;
         reset = 1;
-        dvsr = 54; //54 clock cycles between two ticks
+        dvsr = 53; //54 clock cycles between two ticks
         //dvsr=100M/(16*115200) -1 =53
         //WE ARE USING BAUD RATE OF 115200
 
