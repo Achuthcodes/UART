@@ -119,7 +119,7 @@ module receiver(
                         s<=s+1;
                 end
                 DATA:begin
-                    if (s==15) begin
+                    if (s==15 && s_tick) begin
                         s<=0; //reset s
                         data[n]<=rx;
                         if (next_state==DATA && s_tick) //DONT UPDATE AT EVERY CLOCK CYCLE, UPDATE ONLY WHEN THE TICK COMES!
@@ -140,6 +140,7 @@ module receiver(
             endcase
         end
     end
+endmodule
 
     
 
