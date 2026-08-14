@@ -56,7 +56,7 @@ module transmitter(
     //STATE REGISTERS (SEQUENTIAL)
     always @(posedge clk) begin
         if (reset) begin
-            tx<=0;
+            tx<=1;
             tx_done_tick<=0;
             n<=0;
             s<=0;
@@ -124,5 +124,5 @@ endmodule
 
 
 
-                `
+                
 
