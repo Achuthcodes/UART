@@ -1,11 +1,11 @@
-module FIFO( //It is applicable for both the TX FIFO and the RX FIFO
+module fifo( //It is applicable for both the TX FIFO and the RX FIFO
     input clk,
     input [7:0]w_data, //Input into the FIFO
 
     input reset,
     
-    input wr;//write control signal
-    input rd;//read control signal
+    input wr,//write control signal
+    input rd,//read control signal
     output reg [7:0]r_data, //OUTPUT OF THE FIFO
     output reg full, //FIFO is full or not
     output reg empty //FIFO is empty or not
