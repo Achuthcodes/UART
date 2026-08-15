@@ -81,7 +81,7 @@ module transmitter(
                     else if (s==15 && s_tick) begin
                         s<=0;
                         n<=0;
-                        tx=data[n];
+                        tx<=data[n];
                     end
                     
 
