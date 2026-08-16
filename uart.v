@@ -3,8 +3,6 @@ module uart(
     input clk,
     input wr_uart,
     input rd_uart,
-
-    input [1:0] addr,
     input [7:0]data,
     output [7:0]out
     
@@ -29,59 +27,67 @@ module uart(
 
     reg [1:0]tx_state;
     reg [1:0]tx_next_state;
-    parameter IDLE=0,FETCH=1, SEND=2; //TRANSMITTER CONTROL FSM
+    parameter IDLE=0,FETCH=1, START_TX=2,SEND=3; //TRANSMITTER CONTROL FSM
     baudgen baudgen_uart(clk,reset,11'd53,s_tick);
 
 
     always @(*) begin //NEXT STATE LOGIC FOR TRANSMITTER CONTROL FSM
-        case(tx_state)
-            IDLE:begin //IDLE STATE: in the beginning, it checks if fifo is empty, and goes to next state,but after the first byte, before returning to idle or fetch, we check the done signal
-                if (!tx_fifo_empty)
-                    tx_next_state=FETCH;
-                else
-                    tx_next_state=IDLE;
-            end
-            FETCH:begin //FETCHES THE BYTE FROM THE FIFO
-                tx_next_state=SEND;
-            end
-            SEND: begin
-                if (tx_done_tick) begin
-                    if (!tx_fifo_empty)
-                        tx_next_state = FETCH;
-                    else
-                        tx_next_state = IDLE;
-                end
-                else
-                    tx_next_state = SEND;
-            end
+    case(tx_state)
 
-            default: begin
+        IDLE: begin
+            if (!tx_fifo_empty)
+                tx_next_state = FETCH;
+            else
                 tx_next_state = IDLE;
+        end
+
+        FETCH: begin
+            tx_next_state = START_TX;
+        end
+
+        START_TX: begin
+            tx_next_state = SEND;
+        end
+
+        SEND: begin
+            if (tx_done_tick) begin
+                if (!tx_fifo_empty)
+                    tx_next_state = FETCH;
+                else
+                    tx_next_state = IDLE;
             end
-            
-            
+            else
+                tx_next_state = SEND;
+        end
+
+        default:
+            tx_next_state = IDLE;
+
+    endcase
+end
+always @(posedge clk) begin //SEQUENTIAL LOGIC FOR TRANSMITTER
+    if (reset) begin
+        tx_state   <= IDLE;
+        tx_fifo_rd <= 0;
+        tx_start   <= 0;
+    end
+    else begin
+        tx_state   <= tx_next_state;
+
+        tx_fifo_rd <= 0;
+        tx_start   <= 0;
+
+        case(tx_state)
+
+            FETCH:
+                tx_fifo_rd <= 1;
+
+            START_TX:
+                tx_start <= 1;
+
         endcase
     end
-    always @(posedge clk) begin //SEQUENTIAL LOGIC FOR TX CONTROL FSM
-        if (reset) begin
-            tx_state<=IDLE;
-            tx_fifo_rd<=0;
-            tx_start<=0;
-        end
-        else begin
-            tx_state<=tx_next_state;
-            tx_fifo_rd <= 0;
-            tx_start <= 0;
-            case(tx_state)
-                FETCH:begin
-                    tx_fifo_rd<=1;
-                end
-                SEND:begin
-                    tx_start<=1;
-                end
-            endcase
-        end
-    end
+end
 
 
                     
@@ -108,6 +114,3 @@ module uart(
 
 
 endmodule
-
-
-
