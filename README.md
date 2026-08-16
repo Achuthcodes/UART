@@ -1,2 +1,3 @@
 #UART Communication System | Verilog HDL
+
 Designed and implemented a complete UART communication system in Verilog, supporting parallel 8-bit data input/output with internal serial transmission and reception. The design includes a baud-rate generator, TX/RX FIFOs, FSM-based transmitter and receiver, and multi-byte data handling. Verified the complete TX → serial channel → RX → output path through simulation using Icarus Verilog and GTKWave, including multi-byte transmission and reception.
