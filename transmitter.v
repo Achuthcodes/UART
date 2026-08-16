@@ -35,7 +35,7 @@ module transmitter(
                     next_state=START;
             end
             DATA:begin
-                if(s==15) begin
+                if(s==15 && s_tick) begin
                     if (n==DBIT-1)
                         next_state=STOP;
                     else
@@ -45,7 +45,7 @@ module transmitter(
                     next_state=DATA;
             end
             STOP:begin
-                if (s==15)
+                if (s==15 && s_tick)
                     next_state=IDLE;
                 else
                     next_state=STOP;
@@ -89,7 +89,7 @@ module transmitter(
                     
                 end
                 DATA:begin
-                    if (s==15) begin
+                    if (s==15 && s_tick) begin
                         
                         s<=0;
                         if (n!=DBIT-1) begin
@@ -110,7 +110,7 @@ module transmitter(
                     tx<=1;
                     if (s!=15 && s_tick)
                         s<=s+1;
-                    else if(s==15)
+                    else if(s==15 && s_tick)
                         tx_done_tick<=1;
                 end
             endcase
